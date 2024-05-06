@@ -11,8 +11,11 @@ import {
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from './product.entity';
-import { CreateProductDto, UpdateProductDto } from './product.dto';
-import { PageOptionsDto } from 'src/pagination/page-options.dto';
+import {
+  CreateProductDto,
+  ProductQueryDto,
+  UpdateProductDto,
+} from './product.dto';
 import { PageDto } from 'src/pagination/page.dto';
 
 @Controller('product')
@@ -28,12 +31,17 @@ export class ProductController {
   }
 
   @Get()
-  findAll(@Query() pageOptionsDto: PageOptionsDto): Promise<PageDto<Product>> {
-    return this.productService.findAll({
-      skip: pageOptionsDto.skip,
-      take: pageOptionsDto.take,
-      page: pageOptionsDto.page,
-    });
+  findAll(
+    @Query() productQueryDto: ProductQueryDto,
+  ): Promise<PageDto<Product>> {
+    return this.productService.findAll(
+      {
+        skip: productQueryDto.skip,
+        take: productQueryDto.take,
+        page: productQueryDto.page,
+      },
+      productQueryDto.categoryId,
+    );
   }
 
   @Post()

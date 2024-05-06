@@ -1,5 +1,7 @@
+import { IsInt, Max, Min } from 'class-validator';
 import { BaseEntity } from 'src/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Category } from 'src/category/category.entity';
+import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -20,4 +22,24 @@ export class Product extends BaseEntity {
 
   @Column({ nullable: true })
   image: string;
+
+  @Column({ default: 0 })
+  @Min(0)
+  @Max(100)
+  @IsInt()
+  salePercentage: number;
+
+  @Column({ default: false })
+  isSale: string;
+
+  @Column({ default: true })
+  isNewArrival: boolean;
+
+  @Column({ nullable: true })
+  categoryId: number;
+
+  @ManyToOne(() => Category, (category) => category.products, {
+    onDelete: 'SET NULL',
+  })
+  category: Category;
 }

@@ -1,4 +1,5 @@
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { PageOptionsDto } from 'src/pagination/page-options.dto';
 
 export class CreateProductDto {
   @IsString()
@@ -12,6 +13,10 @@ export class CreateProductDto {
   @IsInt()
   @IsNotEmpty()
   price: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  categoryId: number;
 }
 
 export class UpdateProductDto {
@@ -23,4 +28,8 @@ export class UpdateProductDto {
 
   @IsInt()
   price: number;
+}
+
+export class ProductQueryDto extends PageOptionsDto {
+  categoryId: number;
 }

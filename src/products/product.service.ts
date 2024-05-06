@@ -19,12 +19,30 @@ export class ProductService {
     });
   }
 
-  async findAll(pageOptionsDto: PageOptionsDto): Promise<PageDto<Product>> {
-    const result = await this.productRepository.find({
-      skip: pageOptionsDto.skip,
-      take: pageOptionsDto.take,
-    });
-    const itemCount = await this.productRepository.count();
+  async findAll(
+    pageOptionsDto: PageOptionsDto,
+    categoryId: number,
+  ): Promise<PageDto<Product>> {
+    let result: Product[];
+    let itemCount: number;
+    if (categoryId) {
+      result = await this.productRepository.find({
+        skip: pageOptionsDto.skip,
+        take: pageOptionsDto.take,
+        where: {
+          categoryId,
+        },
+      });
+      itemCount = await this.productRepository.count({
+        where: { categoryId },
+      });
+    } else {
+      result = await this.productRepository.find({
+        skip: pageOptionsDto.skip,
+        take: pageOptionsDto.take,
+      });
+      itemCount = await this.productRepository.count();
+    }
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
     return new PageDto(result, pageMetaDto);
   }

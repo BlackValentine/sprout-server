@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { ProductModule } from './products/product.module';
 import { ConfigModule } from '@nestjs/config';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { ConfigModule } from '@nestjs/config';
       },
     }),
     ProductModule,
+    CategoryModule,
   ],
   controllers: [],
   providers: [],
