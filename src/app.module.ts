@@ -4,12 +4,11 @@ import { join } from 'path';
 import { ProductModule } from './products/product.module';
 import { ConfigModule } from '@nestjs/config';
 import { CategoryModule } from './category/category.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
@@ -25,6 +24,7 @@ import { CategoryModule } from './category/category.module';
     }),
     ProductModule,
     CategoryModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],

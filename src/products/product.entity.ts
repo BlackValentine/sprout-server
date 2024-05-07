@@ -1,7 +1,8 @@
 import { IsInt, Max, Min } from 'class-validator';
 import { BaseEntity } from 'src/base.entity';
+import { CartItem } from 'src/cart/cartItem.entity';
 import { Category } from 'src/category/category.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToOne } from 'typeorm';
 
 @Entity()
 export class Product extends BaseEntity {
@@ -42,4 +43,7 @@ export class Product extends BaseEntity {
     onDelete: 'SET NULL',
   })
   category: Category;
+
+  @OneToOne(() => CartItem, (cartItem) => cartItem.product)
+  cartItem: CartItem;
 }
