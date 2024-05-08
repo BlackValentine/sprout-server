@@ -9,6 +9,8 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from './user.service';
 import { RefreshDto } from './auth.dto';
 import { ITokenProvider } from './user.interface';
+import { User } from './user.entity';
+import { CurrentUser } from './decorators/currentUser.decorator';
 
 @Injectable()
 export class AuthService {
@@ -54,5 +56,9 @@ export class AuthService {
     } catch (error) {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
     }
+  }
+
+  async getMe(@CurrentUser() currentUser): Promise<User> {
+    return currentUser;
   }
 }
