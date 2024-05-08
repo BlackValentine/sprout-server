@@ -57,6 +57,7 @@ export class UserService {
   async findUserByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { email },
+      relations: ['cart.cartItems.product'],
     });
     if (!user) {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);

@@ -19,6 +19,8 @@ import {
 } from './product.dto';
 import { PageDto } from 'src/pagination/page.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { RoleGuard } from 'src/guards/role.guard';
+import { ROLES } from 'src/user/user.entity';
 
 @Controller('product')
 export class ProductController {
@@ -33,6 +35,8 @@ export class ProductController {
   }
 
   @Get()
+  @UseGuards(new RoleGuard([ROLES.USER, ROLES.USER]))
+  @UseGuards(AuthGuard)
   findAll(
     @Query() productQueryDto: ProductQueryDto,
   ): Promise<PageDto<Product>> {
