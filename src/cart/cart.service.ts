@@ -21,26 +21,14 @@ export class CartService {
       },
       relations: ['cartItems.product'],
     });
-    if (!cart) {
-      throw new HttpException('Cart is not existed', HttpStatus.BAD_REQUEST);
-    }
     return cart;
   }
 
   async deleteCartItem(cartId: number, productId: number): Promise<any> {
     const product = await this.productService.findProductById(productId);
-    if (!product) {
-      throw new HttpException('Product is not exist', HttpStatus.BAD_REQUEST);
-    }
 
-    const currentCart = await this.cartRepo.findOne({
-      where: {
-        id: cartId,
-      },
-    });
-    if (!currentCart) {
-      throw new HttpException('Cart is not exist', HttpStatus.BAD_REQUEST);
-    }
+    const currentCart = await this.getCartById(cartId);
+
     const existCartItem = await this.cartItemRepo.findOne({
       where: {
         productId,
@@ -69,9 +57,7 @@ export class CartService {
     userId: number,
   ): Promise<Cart> {
     const product = await this.productService.findProductById(productId);
-    if (!product) {
-      throw new HttpException('Product is not exist', HttpStatus.BAD_REQUEST);
-    }
+
     const price = product.price * item.quantity;
 
     let currentCart: Cart;

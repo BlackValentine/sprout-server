@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { CartController } from './cart.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,6 +8,8 @@ import { ProductModule } from 'src/products/product.module';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserModule } from 'src/user/user.module';
+import { CheckCartExist } from 'src/middlewares/checkCartExist.middleware';
+import { CheckProductExist } from 'src/middlewares/checkProductExist.middleware';
 
 @Module({
   imports: [
@@ -18,4 +20,12 @@ import { UserModule } from 'src/user/user.module';
   controllers: [CartController],
   providers: [CartService, JwtService, ConfigService],
 })
-export class CartModule {}
+export class CartModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CheckCartExist).forRoutes('cart/:cartId');
+    consumer
+      .apply(CheckCartExist, CheckProductExist)
+      .forRoutes(':cartId/remove-item/:productId');
+    consumer.apply(CheckProductExist).forRoutes(':cartId/add-item/:productId');
+  }
+}
