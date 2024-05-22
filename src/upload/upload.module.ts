@@ -8,5 +8,6 @@ import { NestjsFormDataModule } from 'nestjs-form-data';
   imports: [NestjsFormDataModule],
   controllers: [UploadController],
   providers: [UploadService, ConfigService],
+  exports: [UploadService],
 })
 export class UploadModule {}

@@ -6,6 +6,12 @@ import { FormDataRequest } from 'nestjs-form-data';
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
+  @Post('image-blog')
+  @FormDataRequest()
+  async uploadAndGetLink(@Body() body: any): Promise<string> {
+    return await this.uploadService.uploadAndGetLink(body.image);
+  }
+
   @Post()
   @FormDataRequest()
   async upload(@Body() body: any): Promise<string> {

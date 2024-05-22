@@ -6,22 +6,39 @@ import { CreateProductDto, UpdateProductDto } from './product.dto';
 import { PageOptionsDto } from 'src/pagination/page-options.dto';
 import { PageDto } from 'src/pagination/page.dto';
 import { PageMetaDto } from 'src/pagination/page-meta.dto';
+import { UploadService } from 'src/upload/upload.service';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(Product) private productRepository: Repository<Product>,
+    private readonly uploadService: UploadService,
   ) {}
 
   async findProductById(id: number): Promise<Product> {
-    return await this.productRepository.findOne({
+    const product = await this.productRepository.findOne({
       where: { id },
     });
+    let image: string;
+    let hoverImage: string;
+    if (product?.image) {
+      image = await this.uploadService.getLinkMediaKey(product.image);
+    }
+    if (product?.hoverImage) {
+      hoverImage = await this.uploadService.getLinkMediaKey(product.hoverImage);
+    }
+    return {
+      ...product,
+      image,
+      hoverImage,
+    };
   }
 
   async findAll(
     pageOptionsDto: PageOptionsDto,
     categoryId: number,
+    isSale: boolean,
+    isNewArrival: boolean,
   ): Promise<PageDto<Product>> {
     let result: Product[];
     let itemCount: number;
@@ -31,24 +48,56 @@ export class ProductService {
         take: pageOptionsDto.take,
         where: {
           categoryId,
+          isSale,
+          isNewArrival,
         },
       });
+      for (const product of result) {
+        product.image = await this.uploadService.getLinkMediaKey(product.image);
+        product.hoverImage = await this.uploadService.getLinkMediaKey(
+          product.hoverImage,
+        );
+      }
       itemCount = await this.productRepository.count({
-        where: { categoryId },
+        where: { categoryId, isSale, isNewArrival },
       });
     } else {
       result = await this.productRepository.find({
         skip: pageOptionsDto.skip,
         take: pageOptionsDto.take,
+        where: {
+          isSale,
+          isNewArrival,
+        },
       });
-      itemCount = await this.productRepository.count();
+      for (const product of result) {
+        product.image = await this.uploadService.getLinkMediaKey(product.image);
+        product.hoverImage = await this.uploadService.getLinkMediaKey(
+          product.hoverImage,
+        );
+      }
+      itemCount = await this.productRepository.count({
+        where: {
+          isSale,
+          isNewArrival,
+        },
+      });
     }
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
     return new PageDto(result, pageMetaDto);
   }
 
   async createProduct(createProductDto: CreateProductDto): Promise<Product> {
-    const newProduct = this.productRepository.create(createProductDto);
+    const image = await this.uploadService.upload(createProductDto.image);
+    const hoverImage = await this.uploadService.upload(
+      createProductDto.hoverImage,
+    );
+    const product = {
+      ...createProductDto,
+      image: image,
+      hoverImage: hoverImage,
+    };
+    const newProduct = this.productRepository.create(product);
     return this.productRepository.save(newProduct);
   }
 

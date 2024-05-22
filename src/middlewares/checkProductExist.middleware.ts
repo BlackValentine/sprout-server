@@ -12,8 +12,8 @@ export class CheckProductExist implements NestMiddleware {
   constructor(private readonly productService: ProductService) {}
   async use(req: Request, res: Response, next: NextFunction) {
     const { productId } = req.params;
-    const cart = await this.productService.findProductById(+productId);
-    if (!cart) {
+    const product = await this.productService.findProductById(+productId);
+    if (!product) {
       throw new HttpException('Product is not exist.', HttpStatus.BAD_REQUEST);
     }
     next();

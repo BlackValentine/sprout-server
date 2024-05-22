@@ -11,13 +11,13 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   app.enableCors({
-    origin: [configService.get('FE_URL')],
+    origin: [configService.get('FE_URL'), configService.get('ADMIN_URL')],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   });
 
   const options = new DocumentBuilder()
-    .setTitle('Two 14 Coffee')
+    .setTitle('Sprout Plant')
     .setDescription('My API Swagger description')
     .setVersion('1.0')
     .addServer('http://localhost:8080/', 'Local environment')

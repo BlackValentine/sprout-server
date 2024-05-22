@@ -24,6 +24,9 @@ export class Product extends BaseEntity {
   @Column({ nullable: true })
   image: string;
 
+  @Column({ nullable: true })
+  hoverImage: string;
+
   @Column({ default: 0 })
   @Min(0)
   @Max(100)
@@ -31,7 +34,7 @@ export class Product extends BaseEntity {
   salePercentage: number;
 
   @Column({ default: false })
-  isSale: string;
+  isSale: boolean;
 
   @Column({ default: true })
   isNewArrival: boolean;

@@ -1,7 +1,8 @@
 import { Exclude } from 'class-transformer';
 import { BaseEntity } from 'src/base.entity';
+import { Blog } from 'src/blog/blog.entity';
 import { Cart } from 'src/cart/cart.entity';
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 
 export enum ROLES {
   'USER',
@@ -28,4 +29,7 @@ export class User extends BaseEntity {
 
   @OneToOne(() => Cart, (cart) => cart.user)
   cart: Cart;
+
+  @OneToMany(() => Blog, (blog) => blog.author)
+  blog: Blog[];
 }

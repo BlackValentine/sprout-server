@@ -19,24 +19,23 @@ import {
 } from './product.dto';
 import { PageDto } from 'src/pagination/page.dto';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { RoleGuard } from 'src/guards/role.guard';
-import { ROLES } from 'src/user/user.entity';
+import { FormDataRequest } from 'nestjs-form-data';
 
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Get(':id')
+  @Get(':productId')
   async findProductById(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('productId', ParseIntPipe) productId: number,
   ): Promise<Product> {
-    await this.productService.increaseProductView(id);
-    return this.productService.findProductById(id);
+    await this.productService.increaseProductView(productId);
+    return this.productService.findProductById(productId);
   }
 
   @Get()
-  @UseGuards(new RoleGuard([ROLES.USER, ROLES.USER]))
-  @UseGuards(AuthGuard)
+  // @UseGuards(new RoleGuard([ROLES.USER, ROLES.ADMIN]))
+  // @UseGuards(AuthGuard)
   findAll(
     @Query() productQueryDto: ProductQueryDto,
   ): Promise<PageDto<Product>> {
@@ -47,11 +46,14 @@ export class ProductController {
         page: productQueryDto.page,
       },
       productQueryDto.categoryId,
+      productQueryDto.isSale,
+      productQueryDto.isNewArrival,
     );
   }
 
   @Post()
   @UseGuards(AuthGuard)
+  @FormDataRequest()
   createProduct(@Body() body: CreateProductDto): Promise<Product> {
     return this.productService.createProduct(body);
   }

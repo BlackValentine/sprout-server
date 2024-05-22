@@ -33,17 +33,34 @@ export class UploadService {
       Key: imageName,
     };
     const command = new GetObjectCommand(getObjectParams);
-    const url = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 12 });
+    const url = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 24 });
     return url;
   }
 
   async upload(file: any): Promise<string> {
     const base64Data = file.buffer;
-    const mineType = file.fileType.mime;
+    const mineType = file.fileType?.mime || 'png';
     const objectId = this.genRanHex(32);
     const key = objectId;
     await this.uploadS3(base64Data, key, mineType);
     return objectId;
+  }
+
+  async uploadAndGetLink(file: any): Promise<string> {
+    const s3 = this.getS3();
+    const base64Data = file.buffer;
+    const mineType = file.fileType?.mime || 'png';
+    const objectId = this.genRanHex(32);
+    const key = objectId;
+    await this.uploadS3(base64Data, key, mineType);
+
+    const getObjectParams = {
+      Bucket: this.publicBucketName,
+      Key: objectId,
+    };
+    const command = new GetObjectCommand(getObjectParams);
+    const url = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 24 });
+    return url;
   }
 
   async deleteFileS3(imageName: string): Promise<string> {
