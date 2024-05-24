@@ -2,6 +2,7 @@ import { Exclude } from 'class-transformer';
 import { BaseEntity } from 'src/base.entity';
 import { Blog } from 'src/blog/blog.entity';
 import { Cart } from 'src/cart/cart.entity';
+import { Payment } from 'src/payment/payment.entity';
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 
 export enum ROLES {
@@ -19,6 +20,12 @@ export class User extends BaseEntity {
 
   @Column()
   email: string;
+
+  @Column({ default: null, unique: true })
+  customerId: string;
+
+  @OneToMany(() => Payment, (payment) => payment.customer)
+  payments: Payment[];
 
   @Column({ default: ROLES.USER })
   role: ROLES;

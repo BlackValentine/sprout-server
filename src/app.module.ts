@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import { CartModule } from './cart/cart.module';
 import { UploadModule } from './upload/upload.module';
 import { BlogModule } from './blog/blog.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { BlogModule } from './blog/blog.module';
     CartModule,
     UploadModule,
     BlogModule,
+    PaymentModule,
   ],
   controllers: [],
   providers: [],

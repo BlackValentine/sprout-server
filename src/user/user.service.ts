@@ -6,12 +6,14 @@ import { RegisterDto, LoginDto } from './user.dto';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { ITokenProvider } from './user.interface';
+import { PaymentService } from 'src/payment/payment.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private readonly authService: AuthService,
+    private readonly paymentService: PaymentService,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<User> {
@@ -24,8 +26,12 @@ export class UserService {
       throw new HttpException('Email already exists.', HttpStatus.BAD_REQUEST);
     }
     const hashPassword = await bcrypt.hash(registerDto.password, 10);
-    const user = await this.userRepository.create({
+    const customerId = await this.paymentService.createCustomer({
+      email: registerDto.email,
+    });
+    const user = this.userRepository.create({
       ...registerDto,
+      customerId,
       password: hashPassword,
     });
     return this.userRepository.save(user);
